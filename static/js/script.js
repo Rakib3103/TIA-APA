@@ -71,7 +71,7 @@ const sendMessage = async () => {
     // Display assistant's response
     const botChat = createChatElement(`<div class="chat-content">
                                             <div class="chat-details">
-                                                <img src="/static/images/Fixed Pink Pinwheel.png" alt="assistant-img">
+                                                <img src="/static/images/FixedPinwheel.png" alt="assistant-img">
                                                 <p>${data.response}</p>
                                             </div>
                                         </div>`, "incoming");

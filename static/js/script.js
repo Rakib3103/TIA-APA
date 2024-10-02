@@ -115,7 +115,7 @@ const handleFileUpload = async (event) => {
 
         const botChat = createChatElement(`<div class="chat-content">
                                                 <div class="chat-details">
-                                                    <img src="/static/images/Fixed Pink Pinwheel.png" alt="assistant-img">
+                                                    <img src="/static/images/FixedPinwheel.png" alt="assistant-img">
                                                     <p>${botResponse}</p>
                                                 </div>
                                             </div>`, "incoming");
@@ -127,7 +127,7 @@ const handleFileUpload = async (event) => {
         console.error("Error while uploading file:", error);
         const errorChat = createChatElement(`<div class="chat-content">
                                                  <div class="chat-details">
-                                                     <img src="/static/images/Fixed Pink Pinwheel.png" alt="assistant-img">
+                                                     <img src="/static/images/FixedPinwheel.png" alt="assistant-img">
                                                      <p class="error">Error: Unable to upload file.</p>
                                                  </div>
                                              </div>`, "incoming");

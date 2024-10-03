@@ -330,7 +330,7 @@ span.material-symbols-rounded {
   position: absolute;
   top: 10px;
   left: 10px;
-  width: 200px; /* Adjust the size */
+  width: 100px; /* Adjust the size */
   height: auto;
   z-index: 100; /* Make sure it's above other elements */
 }

@@ -327,7 +327,7 @@ span.material-symbols-rounded {
 
 /* Position the animated GIF at the top-left of the page */
 .top-left-gif {
-  position: absolute;
+  position: fixed;
   top: 10px;
   left: 10px;
   width: 100px; /* Adjust the size */

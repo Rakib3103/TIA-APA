@@ -332,5 +332,6 @@ span.material-symbols-rounded {
   left: 10px;
   width: 100px; /* Adjust the size */
   height: auto;
-  z-index: 100; /* Make sure it's above other elements */
+  z-index: 1; /* Make sure it's above other elements */
+  pointer-events: none; /* Optional: Make sure the GIF doesn't interfere with chat interactions */
 }

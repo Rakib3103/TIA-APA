@@ -344,7 +344,17 @@ span.material-symbols-rounded {
 
 /* Position the animated GIF at the top-left of the page */
 .top-left-gif {
+<<<<<<< HEAD
   width: 70px; /* Adjust the size */
   height: auto;
   z-index: 100;
+=======
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  width: 100px; /* Adjust the size */
+  height: auto;
+  z-index: 1; /* Make sure it's above other elements */
+  pointer-events: none; /* Optional: Make sure the GIF doesn't interfere with chat interactions */
+>>>>>>> 66b03783869a3fe46b3dd3c11611fa78f99c05c6
 }

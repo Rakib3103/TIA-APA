@@ -249,33 +249,40 @@ span.material-symbols-rounded {
   background: var(--icon-hover-bg);
 }
 
-/* Additional styling for the upload button */
-.typing-container #uploadForm {
-  display: inline-flex;
-  align-items: center;
-}
-
-.typing-container #upload-btn {
+#microphone-btn {
   margin-right: 10px;
-  cursor: pointer;
-  font-size: 1.35rem;
-  color: var(--icon-color);
-  display: flex;
-  align-items: center;
-  justify-content: center;
   width: 55px;
   height: 55px;
-  background: var(--incoming-chat-bg);
+  display: flex;
   border-radius: 4px;
-  outline: 1px solid var(--incoming-chat-border);
+  font-size: 1.35rem;
+  align-items: center;
+  justify-content: center;
+  color: var(--icon-color);
+  background: var(--incoming-chat-bg); /* Matching the background color */
+  outline: 1px solid var(--incoming-chat-border); /* Bounded box similar to other buttons */
+  cursor: pointer;
 }
 
-.typing-container #upload-btn:hover {
-  background: var(--icon-hover-bg);
+#microphone-btn:hover {
+  background: var(--icon-hover-bg); /* Hover effect like other buttons */
 }
 
-.typing-container #uploadForm input[type="file"] {
-  display: none; /* Hide the actual file input */
+#microphone-btn.active {
+  color: red; /* Changes color when recording */
+  animation: pulse 1s infinite; /* Optional animation */
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 /* Responsive Media Query */

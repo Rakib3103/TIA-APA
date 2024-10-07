@@ -84,22 +84,17 @@ initializeSpeechRecognition();
 // Add event listener for the microphone button
 microphoneButton.addEventListener("click", toggleSpeechRecognition);
 
-// Clear localStorage when the page loads to ensure no previous chats are loaded
-window.addEventListener("load", () => {
-    localStorage.clear();
-    showDefaultText(); // Ensure the default text is shown after clearing localStorage
-});
 // Load previous chats from localStorage
-// const loadDataFromLocalStorage = () => {
-//     const savedChats = localStorage.getItem("all-chats");
+const loadDataFromLocalStorage = () => {
+    const savedChats = localStorage.getItem("all-chats");
 
-//     if (savedChats) {
-//         chatContainer.innerHTML = savedChats;
-//     }
+    if (savedChats) {
+        chatContainer.innerHTML = savedChats;
+    }
 
-//     // Always show the default text
-//     showDefaultText();
-// };
+    // Always show the default text
+    showDefaultText();
+};
 
 // Show default text if no chat history is found
 const showDefaultText = () => {
@@ -196,4 +191,4 @@ chatInput.addEventListener("keydown", (e) => {
 });
 
 // Load previous chats from localStorage
-// loadDataFromLocalStorage();
+loadDataFromLocalStorage();

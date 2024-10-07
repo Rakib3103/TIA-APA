@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, jsonify
 from openai import OpenAI
 from dotenv import load_dotenv
+from werkzeug.utils import secure_filename
 import os
 
 app = Flask(__name__)
@@ -13,6 +14,9 @@ client = OpenAI(api_key=api_key)  # Use the API key to initialize OpenAI client
 # Get assistant and vector store IDs from the environment
 assistant_id = os.getenv('ASSISTANT_ID')
 vector_store_id = os.getenv('VECTOR_STORE_ID')
+
+UPLOAD_FOLDER = 'static/uploads'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # Update the assistant with the vector store ID in the tool_resources
 my_updated_assistant = client.beta.assistants.update(
@@ -33,14 +37,27 @@ def index():
 @app.route('/ask', methods=['POST'])
 @app.route('/ask', methods=['POST'])
 def ask():
-    user_input = request.json['question']
+    # Check if the post request has an image
+    image = request.files.get('image')
+    user_input = request.form.get('question', '')
+
+    image_url = None
+    if image:
+        filename = secure_filename(image.filename)
+        image.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        image_url = f"/static/uploads/{filename}"
+
+    # Handle the assistant interaction
+    message_content = user_input
+    if image_url:
+        message_content += f"\nImage URL: {image_url}"
 
     message = client.beta.threads.messages.create(
         thread_id=thread_id,
         role="user",
-        content=user_input,
+        content=message_content,
     )
-    
+
     run = client.beta.threads.runs.create_and_poll(
         thread_id=thread_id,
         assistant_id=assistant_id
@@ -71,8 +88,6 @@ def ask():
         return jsonify({'response': response_content})
     else:
         return jsonify({'response': "No assistant response found."})
-
-
 
 if __name__ == '__main__':
     app.run(debug=True)

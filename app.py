@@ -4,6 +4,8 @@ from dotenv import load_dotenv
 from werkzeug.utils import secure_filename
 import os
 import base64
+from io import BytesIO
+
 
 app = Flask(__name__)
 load_dotenv()
@@ -43,37 +45,25 @@ def ask():
     vision_info = ""
     
     if image:
-        filename = secure_filename(image.filename)
-        image.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-        image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-
-        # Get base64 encoded image
-        base64_image = encode_image(image_path)
+        # Read the image file directly into memory
+        image_bytes = image.read()
+        base64_image = base64.b64encode(image_bytes).decode('utf-8')
 
         # Prepare the message for the OpenAI Vision API
         response = client.chat.completions.create(
             model="gpt-4o-mini",  # Use the appropriate model
-            messages=[
-                {
-                    "role": "user",
-                    "content": [
-                        {
-                            "type": "text",
-                            "text": user_input,
-                        },
-                        {
-                            "type": "image_url",
-                            "image_url": {
-                                "url": f"data:image/jpeg;base64,{base64_image}"
-                            },
-                        },
-                    ],
-                }
-            ],
+            messages=[{
+                "role": "user",
+                "content": [
+                    {"type": "text", "text": user_input},
+                    {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{base64_image}"}},
+                ],
+            }]
         )
 
         # Extract the vision information
         vision_info = response.choices[0].message.content
+
 
     # Combine user input with the vision analysis
     combined_input = user_input

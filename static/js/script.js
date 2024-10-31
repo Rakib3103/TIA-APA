@@ -22,7 +22,7 @@ imageInput.addEventListener("change", async () => {
     }
 });
 
-const resizeAndCompressImage = async (file, maxWidth = 500, maxHeight = 500, quality = 0.3) => { // Adjusted values
+const resizeAndCompressImage = async (file, maxWidth = 200, maxHeight = 200, quality = 0.1) => { // Adjusted values
     return new Promise((resolve) => {
         const reader = new FileReader();
         reader.readAsDataURL(file);

@@ -31,10 +31,11 @@ imageInput.addEventListener("change", () => {
         chatContainer.appendChild(imagePreview);
         chatContainer.scrollTo(0, chatContainer.scrollHeight);
 
-        // Automatically send the image after selection
-        sendMessage();
+        // Send the message immediately after selection
+        sendMessage(); // Call sendMessage directly here
     }
 });
+
 
 let recognition;
 let isRecognizing = false;

@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 from werkzeug.utils import secure_filename
 import os
 import base64
-from io import BytesIO
+import re 
 
 
 app = Flask(__name__)
@@ -45,25 +45,37 @@ def ask():
     vision_info = ""
     
     if image:
-        # Read the image file directly into memory
-        image_bytes = image.read()
-        base64_image = base64.b64encode(image_bytes).decode('utf-8')
+        filename = secure_filename(image.filename)
+        image.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+
+        # Get base64 encoded image
+        base64_image = encode_image(image_path)
 
         # Prepare the message for the OpenAI Vision API
         response = client.chat.completions.create(
             model="gpt-4o-mini",  # Use the appropriate model
-            messages=[{
-                "role": "user",
-                "content": [
-                    {"type": "text", "text": user_input},
-                    {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{base64_image}"}},
-                ],
-            }]
+            messages=[
+                {
+                    "role": "user",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": user_input,
+                        },
+                        {
+                            "type": "image_url",
+                            "image_url": {
+                                "url": f"data:image/jpeg;base64,{base64_image}"
+                            },
+                        },
+                    ],
+                }
+            ],
         )
 
         # Extract the vision information
         vision_info = response.choices[0].message.content
-
 
     # Combine user input with the vision analysis
     combined_input = user_input
@@ -104,11 +116,16 @@ def ask():
                 if hasattr(content_block, 'text') and hasattr(content_block.text, 'value'):
                     response_content = content_block.text.value
                     break
-        
+
+
         if response_content is None:
             response_content = "No valid response content available."
-        
-        return jsonify({'response': response_content})
+        response_content = re.sub(r'\*{1,2}(.*?)\*{1,2}', r'\1', response_content)  # Remove **text**
+        response_content = re.sub(r'"(.*?)"', r'\1', response_content)  # Remove "text"
+        response_content = re.sub(r'\[\d+:\d+\s+source\]', '', response_content)  # Remove [4:7 source]
+
+        return jsonify({'response': response_content.strip()})  # Strip to remove any leading/trailing whitespace
+        # return jsonify({'response': response_content})
     else:
         return jsonify({'response': "No assistant response found."})
 

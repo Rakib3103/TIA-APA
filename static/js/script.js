@@ -14,28 +14,69 @@ addButton.addEventListener("click", () => {
     imageInput.click();
 });
 
-imageInput.addEventListener("change", () => {
+imageInput.addEventListener("change", async () => {
     const file = imageInput.files[0];
     if (file) {
-        selectedImageFile = file;
+        selectedImageFile = await resizeAndCompressImage(file, 800, 800, 0.7); // Resize to 800x800 and compress at 70% quality
 
         // Create an image URL to display in the chat
-        const imageUrl = URL.createObjectURL(file);
+        const imageUrl = URL.createObjectURL(selectedImageFile);
         
         // Display the image in the chatbox
-        const imagePreview = createChatElement(`<div class="chat-content">
-                                                    <div class="chat-details">
-                                                        <img src="${imageUrl}" alt="uploaded-image" class="uploaded-image">
-                                                    </div>
-                                                </div>`, "outgoing");
-        chatContainer.appendChild(imagePreview);
-        chatContainer.scrollTo(0, chatContainer.scrollHeight);
+        // const imagePreview = createChatElement(`<div class="chat-content">
+        //                                             <div class="chat-details">
+        //                                                 <img src="${imageUrl}" alt="uploaded-image" class="uploaded-image">
+        //                                             </div>
+        //                                         </div>`, "outgoing");
+        // chatContainer.appendChild(imagePreview);
+        // chatContainer.scrollTo(0, chatContainer.scrollHeight);
 
-        // Send the message immediately after selection
-        sendMessage(); // Call sendMessage directly here
+        sendMessage(); // Send the compressed image immediately
     }
 });
 
+const resizeAndCompressImage = async (file, maxWidth, maxHeight, quality) => {
+    return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        
+        reader.onload = (event) => {
+            const img = new Image();
+            img.src = event.target.result;
+            
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                let width = img.width;
+                let height = img.height;
+
+                // Maintain aspect ratio
+                if (width > height) {
+                    if (width > maxWidth) {
+                        height = Math.round((height * maxWidth) / width);
+                        width = maxWidth;
+                    }
+                } else {
+                    if (height > maxHeight) {
+                        width = Math.round((width * maxHeight) / height);
+                        height = maxHeight;
+                    }
+                }
+
+                canvas.width = width;
+                canvas.height = height;
+                
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+
+                // Compress and convert the canvas to a Blob
+                canvas.toBlob((blob) => {
+                    const compressedFile = new File([blob], file.name, { type: 'image/jpeg', lastModified: Date.now() });
+                    resolve(compressedFile);
+                }, 'image/jpeg', quality);
+            };
+        };
+    });
+};
 
 let recognition;
 let isRecognizing = false;
@@ -114,7 +155,6 @@ const sendMessage = async () => {
 
     if (!userText && !selectedImageFile) return; // Don't send if there's no text or image
 
-    // Combine image and text into a single chat element
     let messageContent = '';
     if (selectedImageFile) {
         const imageUrl = URL.createObjectURL(selectedImageFile);
@@ -124,7 +164,6 @@ const sendMessage = async () => {
         messageContent += `<p>${userText}</p>`;
     }
 
-    // Display the combined message
     const userChat = createChatElement(`<div class="chat-content">
                                             <div class="chat-details">
                                                 <img src="/static/images/user.jpg" alt="user-img">
@@ -134,16 +173,13 @@ const sendMessage = async () => {
     chatContainer.appendChild(userChat);
     chatContainer.scrollTo(0, chatContainer.scrollHeight);
 
-    // Prepare data to send
     const formData = new FormData();
     if (userText) formData.append("question", userText);
     if (selectedImageFile) formData.append("image", selectedImageFile);
 
-    // Clear input fields after message is sent
     chatInput.value = "";
     selectedImageFile = null;
 
-    // Send the request to the server
     const response = await fetch('/ask', {
         method: 'POST',
         body: formData,
@@ -151,7 +187,6 @@ const sendMessage = async () => {
 
     const data = await response.json();
 
-    // Display assistant's response
     const botChat = createChatElement(`<div class="chat-content">
                                             <div class="chat-details">
                                                 <img src="/static/images/FixedPinwheel.png" alt="assistant-img">

@@ -17,25 +17,12 @@ addButton.addEventListener("click", () => {
 imageInput.addEventListener("change", async () => {
     const file = imageInput.files[0];
     if (file) {
-        selectedImageFile = await resizeAndCompressImage(file, 800, 800, 0.7); // Resize to 800x800 and compress at 70% quality
-
-        // Create an image URL to display in the chat
-        const imageUrl = URL.createObjectURL(selectedImageFile);
-        
-        // Display the image in the chatbox
-        // const imagePreview = createChatElement(`<div class="chat-content">
-        //                                             <div class="chat-details">
-        //                                                 <img src="${imageUrl}" alt="uploaded-image" class="uploaded-image">
-        //                                             </div>
-        //                                         </div>`, "outgoing");
-        // chatContainer.appendChild(imagePreview);
-        // chatContainer.scrollTo(0, chatContainer.scrollHeight);
-
+        selectedImageFile = await resizeAndCompressImage(file); // Compression with new defaults
         sendMessage(); // Send the compressed image immediately
     }
 });
 
-const resizeAndCompressImage = async (file, maxWidth, maxHeight, quality) => {
+const resizeAndCompressImage = async (file, maxWidth = 500, maxHeight = 500, quality = 0.3) => { // Adjusted values
     return new Promise((resolve) => {
         const reader = new FileReader();
         reader.readAsDataURL(file);
@@ -72,7 +59,7 @@ const resizeAndCompressImage = async (file, maxWidth, maxHeight, quality) => {
                 canvas.toBlob((blob) => {
                     const compressedFile = new File([blob], file.name, { type: 'image/jpeg', lastModified: Date.now() });
                     resolve(compressedFile);
-                }, 'image/jpeg', quality);
+                }, 'image/jpeg', quality); // Lowered quality
             };
         };
     });

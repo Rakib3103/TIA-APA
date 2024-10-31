@@ -30,11 +30,11 @@ imageInput.addEventListener("change", () => {
                                                 </div>`, "outgoing");
         chatContainer.appendChild(imagePreview);
         chatContainer.scrollTo(0, chatContainer.scrollHeight);
+
+        // Automatically send the image after selection
+        sendMessage();
     }
 });
-
-
-
 
 let recognition;
 let isRecognizing = false;
@@ -43,7 +43,6 @@ let isRecognizing = false;
 const initializeSpeechRecognition = () => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     recognition = new SpeechRecognition();
-    // recognition.lang = 'bn-BD', 'en-US'; 
     recognition.lang = 'en-US'; 
     recognition.interimResults = false; 
     recognition.maxAlternatives = 1;
@@ -84,16 +83,10 @@ initializeSpeechRecognition();
 // Add event listener for the microphone button
 microphoneButton.addEventListener("click", toggleSpeechRecognition);
 
-// Load previous chats from localStorage
+// Clear previous chats from localStorage (no longer needed)
 const loadDataFromLocalStorage = () => {
-    const savedChats = localStorage.getItem("all-chats");
-
-    if (savedChats) {
-        chatContainer.innerHTML = savedChats;
-    }
-
-    // Always show the default text
-    showDefaultText();
+    chatContainer.innerHTML = ""; // Clear chat container on load
+    showDefaultText(); // Show default text if no chat history is found
 };
 
 // Show default text if no chat history is found
@@ -166,12 +159,7 @@ const sendMessage = async () => {
                                         </div>`, "incoming");
     chatContainer.appendChild(botChat);
     chatContainer.scrollTo(0, chatContainer.scrollHeight);
-
-    // Store the conversation in localStorage
-    localStorage.setItem("all-chats", chatContainer.innerHTML);
 };
-
-
 
 // Refresh chat history (reset chats)
 const refreshChats = () => {
@@ -190,5 +178,5 @@ chatInput.addEventListener("keydown", (e) => {
     }
 });
 
-// Load previous chats from localStorage
+// Load default text on page load
 loadDataFromLocalStorage();

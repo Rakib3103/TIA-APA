@@ -27,6 +27,7 @@ my_updated_assistant = client.beta.assistants.update(
         3. New Strategies: Share any innovative or modern strategies currently practiced or that could be beneficial to implement.
         
         If a requested piece of information is not covered in the documents, clearly indicate that it is not available in the provided materials. Additionally, you are able to analyze images to identify plant diseases or other issues visible in the image.
+        """,
     name="TIA APA",
     tool_resources={"file_search": {"vector_store_ids": [vector_store_id]}}
 )

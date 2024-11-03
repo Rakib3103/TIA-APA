@@ -28,11 +28,13 @@ imageInput.addEventListener("change", () => {
                                                         <img src="${imageUrl}" alt="uploaded-image" class="uploaded-image">
                                                     </div>
                                                 </div>`, "outgoing");
-        chatContainer.appendChild(imagePreview);
+        // chatContainer.appendChild(imagePreview);
         chatContainer.scrollTo(0, chatContainer.scrollHeight);
+
+        // Automatically send the image after selection
+        sendMessage();
     }
 });
-
 
 
 
